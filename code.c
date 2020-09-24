@@ -9,6 +9,11 @@ main() {
     printf("From main: %s %s\n", a, b);
 }
 
+
+// Ya que aqui foo me devuelve un pointer, pues se tiene q en el heap
+//  y por ende cuando termina el execution stack no se pierde la informacion.
+
+
 char *foo(char *p){
     char *q = (char *)malloc(strlen(p)+1);
     strcpy(q, p);
