@@ -9,16 +9,16 @@ int main(){
     size_t sizeC = sizeof(c);
     size_t sizeD = sizeof(d);
     size_t sizeDarr = sizeof(darr);
-    // printf("%zd\n",sizeC);
-    // printf("%zd\n",sizeD);
-    // printf("%zd\n", sizeDarr);
+    printf("%zd\n",sizeC);
+    printf("%zd\n",sizeD);
+    printf("%zd\n", sizeDarr);
     free(darr);
     // int n = 5; 
     // int arr[] = { 0, 23, 14, 12, 9}; 
     // sort(n, arr);
 
 
-    change();
+    // change();
     return 0; 
 
 }
@@ -53,7 +53,7 @@ void change(){
     int *p;
     p = arrr;
     printf("%zd\n", *p + 1); // Basicamente cuando uso * antes del pointer estoy accesando el primer valor, el resto se puede accesar usando sumas
-    *(p + 1) = *(p + 4); // Porque esto no me funciona? que no estoy viendo?
-    printf("%zd\n", *p + 1);
+    *(p + 1) = *(p + 4);
+    printf("%zd\n", *(p + 1));
 }
   
