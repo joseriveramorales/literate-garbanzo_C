@@ -1,6 +1,9 @@
 #include "stdlib.h"
 #include "stdio.h"
 
+// compile by running gcc code.c -o executableName
+// execute by ./executableName
+
 int main(){
     char c[10];
     int d[10];
@@ -47,7 +50,7 @@ void sort(int n, int* ptr)
         printf("%d ", *(ptr + i)); 
 } 
 
-void change(){
+void change() {
     
     int arrr[] = {1,2,3,4,5};
     int *p;
@@ -56,4 +59,3 @@ void change(){
     *(p + 1) = *(p + 4);
     printf("%zd\n", *(p + 1));
 }
-  

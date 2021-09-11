@@ -2,6 +2,10 @@
 #include <time.h>
 #include <stdlib.h>
 
+// compile by running gcc code.c -o executableName
+// execute by ./executableName
+
+
 //Sort an array A using insertion sort. Notice it is to be passed by reference.
 void sort(/* what's the argument data type?*/ int* A, int n){
 	int tmp;

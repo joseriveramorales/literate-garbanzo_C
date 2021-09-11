@@ -1,6 +1,9 @@
 #include <stdlib.h>
 char *foo(char *);
 
+// compile by running gcc code.c -o executableName
+// execute by ./executableName
+
 main() {
     char *a = NULL;
     char *b = NULL;

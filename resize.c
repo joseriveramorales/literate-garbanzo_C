@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+// compile by running gcc code.c -o executableName
+// execute by ./executableName
 
 int main(){
 	//Allows you to generate random number
@@ -10,6 +12,7 @@ int main(){
 	printf("Enter original array size:");
 	int n1=0;
 	scanf("%d",&n1);
+
 
 	//Create a new array of n1 ints
 	int* a1 = (int *) (malloc(n1*sizeof(int)));
