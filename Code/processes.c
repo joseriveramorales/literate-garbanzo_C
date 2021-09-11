@@ -6,12 +6,19 @@
 // compile by running gcc code.c -o executableName
 // execute by ./executableName
 
+
+// Hello Fork 
+
 int main () {
     pid_t pid;
     // fork a child process
-
-    pid = fork();
-
+    int counter =0;
+    for (int i =0; i < 2; i++)
+    {   
+        pid = fork();
+    }
+    
+    counter++;
     if (pid <0 ){
         // error occurred
         fprintf(stderr, "Fork Failed");
@@ -30,6 +37,7 @@ int main () {
 
         wait(NULL);
         printf("Child finished execution! \n ");
+        printf("\n This is the counter for every process that executed %d \n ", counter);
         exit(0);
     }
 }
