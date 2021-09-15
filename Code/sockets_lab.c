@@ -154,7 +154,7 @@ void client(char *clientName, int numMessages, char *messages[])
     bzero((char *) &serv_addr, sizeof(serv_addr));
         // Inicializo el adddress del servidor
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = PORT_NUMBER;
+    serv_addr.sin_port = htons(PORT_NUMBER);
     bcopy((char *)server ->h_addr ,
         (char *)&serv_addr.sin_addr.s_addr,
         server->h_length);
