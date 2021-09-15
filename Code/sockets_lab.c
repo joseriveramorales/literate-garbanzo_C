@@ -235,6 +235,8 @@ void server()
       exit(EXIT_FAILURE);
     }
     else if (pid ==0){
+        close(sockfd);
+        bzero(buffer,256);
         // child process should read and write
     }
 
