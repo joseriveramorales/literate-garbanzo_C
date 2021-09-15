@@ -193,6 +193,7 @@ void client(char *clientName, int numMessages, char *messages[])
 
 void server()
 {
+    while(!shutdownServer){
     int sockfd, newsockfd, clilen;
     char buffer[256];
     struct sockaddr_in serv_addr, cli_addr;
@@ -241,4 +242,6 @@ void server()
     //Close socket
     close(newsockfd);
     close(sockfd);
+    }
+    exit(EXIT_SUCESS);
 }
