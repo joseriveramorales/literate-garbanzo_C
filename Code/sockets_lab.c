@@ -132,6 +132,7 @@ void shutdownServer(int signal) {
  //Wait for the children to finish
 
  // I need to wait for all my children
+   while(wait(NULL)>0);
 
  //Exit
  exit(EXIT_SUCCESS);
@@ -167,10 +168,12 @@ void client(char *clientName, int numMessages, char *messages[])
 
     for(int i =0; i<numMessages ;i++){
         // Write to the server
-        n = write(sockfd, *(i + messages), strlen(*messages + i));
+        strcopy(buffer, messages(i);
+        n = write(sockfd, buffer, strlen(messages[i]));
         if(n<0) error("ERROR writing to socket");
 
         // read the response
+        bzero(buffer, 256);
         n = read(sockfd,buffer, 255);
         if (n<0) error("ERROR reading from socket");
 
