@@ -10,7 +10,7 @@
 #include <sys/un.h>
 #include <signal.h>
 #include <stdarg.h>
-
+// Use the gcc -pthreads flag
 // Prototypes for internal functions and utilities
 void error(const char *fmt, ...);
 int runClient(char *clientName, int numMessages, char **messages);
