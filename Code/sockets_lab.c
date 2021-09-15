@@ -11,6 +11,9 @@
 #include <signal.h>
 #include <stdarg.h>
 
+// compile by running gcc code.c -o executableName
+// execute by ./executableName
+
 // Prototypes for internal functions and utilities
 void error(const char *fmt, ...);
 int runClient(char *clientName, int numMessages, char **messages);
@@ -127,18 +130,14 @@ int main() {
 bool serverShutdown = false;
 
 void shutdownServer(int signal) {
- //Indicate that the server has to shutdown
- serverShutdown = true;
- //Wait for the children to finish
-
- // I need to wait for all my children
-
- //Exit
- exit(EXIT_SUCCESS);
-
+    //Indicate that the server has to shutdown
+    serverShutdown = true;
+    //Wait for the children to finish
+    wait(NULL);
+    //Exit
+    exit(EXIT_SUCCESS);
 }
 
-// connect , accept , fork
 void client(char *clientName, int numMessages, char *messages[])
 {
     struct sockaddr_in serv_addr;
@@ -154,10 +153,14 @@ void client(char *clientName, int numMessages, char *messages[])
         // Inicializo el adddress del servidor
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = PORT_NUMBER;
+
+    server = gethostbyaddr(&serv_addr, sizeof(serv_addr), 0);
+
     bcopy((char *)server ->h_addr ,
         (char *)&serv_addr.sin_addr.s_addr,
         server->h_length);
 
+        // Invoco la funcion connect usando el socket del cliente y el address del servidor, ahora socketfd es mi buzon
     if (connect(sockfd,(struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
         error("Error connecting");
 
@@ -165,21 +168,23 @@ void client(char *clientName, int numMessages, char *messages[])
     //For each message, write to the server and read the response
             // Aqui itero usando numMessages y el arreglo messages 
 
-    for(int i =0; i<numMessages ;i++){
+    for(int i =0; i<numMessages ; i++){
         // Write to the server
         n = write(sockfd, *(i + messages), strlen(*messages + i));
         if(n<0) error("ERROR writing to socket");
-
+        if(n==0) {
+            close(sockfd);
+            return;
+        }
+        
         // read the response
         n = read(sockfd,buffer, 255);
         if (n<0) error("ERROR reading from socket");
-
-        printf(" Printing buffer %s\n ", buffer);
+        printf("Client %s(%d): Return message: %s\n", clientName, getpid(), buffer);
     }
 
     //Accept connection and create a child proccess to read and write
     
-
     printf("Client %s(%d): Return message: %s\n", clientName, getpid(), buffer);
     fflush(stdout);
     sleep(1);
@@ -211,30 +216,44 @@ void server()
 
     //Bind the socket
     if(bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) <0 ) 
-        error("ERROR on binding");
+        error("ERROR on binding \n ");
 
             // Ahora escucho, 5 es el numero de intento de conexiones que seran consideradas hasta que en la 6ta las conexiones seran rechazadas.
     listen(sockfd, 5);
     clilen = sizeof(cli_addr);
 
-    kill(getpid(), SIGUSR1); // signal ready to receive messages
+    kill(getppid(), SIGUSR1); // send signal ready to receive messages to the parent process id
     
     //Accept connection and create a child proccess to read and write
 
             // La funcion accept me da a devolver un socket, este pertenece al cliente. 
-            // Aqui uno los dos sockets y tengo presente el mailbox que es newsockfd
-    newsockfd = accept(sockfd,(struct sockaddr *) &cli_addr, &clilen);
-
+            // Aqui junto los dos sockets y tengo presente el mailbox que es newsockfd
+    while((newsockfd = accept(sockfd,(struct sockaddr *) &cli_addr, &clilen)) >=0 ){
+        if (newsockfd <0) error("ERROR on accept");
+    }
+    bzero(buffer, 256);
     pid_t pid = fork();
     if (pid < 0) {
       fprintf(stderr, "Fork failed!\n");
       exit(EXIT_FAILURE);
     }
-    else if (pid ==0){
+    else if (pid == 0){
         // child process should read and write
+        int n = read(newsockfd, buffer, 255);
+        if (n<0) error("ERROR reading from socket");
+        printf("Server child(%d): got message: %s\n", getpid(), buffer); //expected output 
+
+        if (n == 0 ) {
+            // Si el read me devuelve 0, fue que el cliente cerro la conexion
+            close(sockfd);
+            close(newsockfd);
+        }
+
+        n = write(newsockfd, buffer, strlen(buffer));
+        if(n<0) error("ERROR writing to socket");
+
     }
 
-    printf("Server child(%d): got message: %s\n", getpid(), buffer); //expected output 
     //Close socket
     close(newsockfd);
     close(sockfd);

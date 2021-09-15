@@ -56,7 +56,6 @@ int runClient(char *clientName, int numMessages, char **messages) {
     printf("Launching client %s...\n", clientName);
     int forkPID = fork();
     if (forkPID < 0)
-
         error("ERROR forking client %s", clientName);
     else if (forkPID == 0) {
         client(clientName, numMessages, messages);
@@ -91,7 +90,6 @@ int main() {
     int serverPID = runServer(getpid());
     while(!serverIsReady) {
         sleep(1);
-        serverIsReady = serverIsReady;
     }
     printf("Main: Server(%d) signaled ready to receive messages\n", serverPID);
 

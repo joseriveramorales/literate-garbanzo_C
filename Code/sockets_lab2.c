@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <sys/wait.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <stdbool.h>
@@ -47,6 +48,7 @@ int runServer(int port) {
         exit(0);
     } else {
         printf("Main: Server(%d) launched...\n", forkPID);
+        wait(NULL);
     }
     return forkPID;
 }
@@ -174,7 +176,7 @@ void server()
     listen(sockfd, 5);
     clilen = sizeof(cli_addr);
 
-    raise(SIGUSR1);
+    kill(getpid(), SIGUSR1);
 
 
 

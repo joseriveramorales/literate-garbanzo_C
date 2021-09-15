@@ -60,7 +60,7 @@ int main( int argc, char *argv[]){
     printf("Here is the message: %s \n", buffer);
 
     // Aqui estoy haciendo un write al mailbox
-    n = write(newsockfd, " I got your message", 18);
+    n = write(newsockfd, "I got your message", 18);
     if(n<0) error("ERROR writing to socket");
     close(newsockfd);
     close(sockfd);
