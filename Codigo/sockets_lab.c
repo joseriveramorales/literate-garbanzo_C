@@ -14,6 +14,7 @@
 // compile by running gcc code.c -o executableName
 // execute by ./executableName
 
+
 // Prototypes for internal functions and utilities
 void error(const char *fmt, ...);
 int runClient(char *clientName, int numMessages, char **messages);
@@ -133,7 +134,7 @@ void shutdownServer(int signal) {
     //Indicate that the server has to shutdown
     serverShutdown = true;
     //Wait for the children to finish
-    wait(NULL);
+    while(wait(NULL) > 0);
     //Exit
     exit(EXIT_SUCCESS);
 }
@@ -152,7 +153,7 @@ void client(char *clientName, int numMessages, char *messages[])
     bzero((char *) &serv_addr, sizeof(serv_addr));
         // Inicializo el adddress del servidor
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = PORT_NUMBER;
+    serv_addr.sin_port = htons(PORT_NUMBER);
 
     server = gethostbyaddr(&serv_addr, sizeof(serv_addr), 0);
 
@@ -170,8 +171,9 @@ void client(char *clientName, int numMessages, char *messages[])
 
     for(int i =0; i<numMessages ; i++){
         // Write to the server
-        n = write(sockfd, *(i + messages), strlen(*messages + i));
-        if(n<0) error("ERROR writing to socket");
+        strcpy(buffer, messages[i]);
+        n = write(sockfd, buffer, strlen(messages[i]));
+       if(n<0) error("ERROR writing to socket");
         if(n==0) {
             close(sockfd);
             return;
@@ -216,7 +218,7 @@ void server()
 
     //Bind the socket
     if(bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) <0 ) 
-        error("ERROR on binding \n ");
+        error("ERROR on binding");
 
             // Ahora escucho, 5 es el numero de intento de conexiones que seran consideradas hasta que en la 6ta las conexiones seran rechazadas.
     listen(sockfd, 5);
@@ -238,6 +240,8 @@ void server()
       exit(EXIT_FAILURE);
     }
     else if (pid == 0){
+        close(sockfd);
+        bzero(buffer,256);
         // child process should read and write
         int n = read(newsockfd, buffer, 255);
         if (n<0) error("ERROR reading from socket");
