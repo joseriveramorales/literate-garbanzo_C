@@ -15,6 +15,7 @@
 // execute by ./executableName
 
 
+// Use the gcc -pthreads flag
 // Prototypes for internal functions and utilities
 void error(const char *fmt, ...);
 int runClient(char *clientName, int numMessages, char **messages);
@@ -131,12 +132,16 @@ int main() {
 bool serverShutdown = false;
 
 void shutdownServer(int signal) {
-    //Indicate that the server has to shutdown
-    serverShutdown = true;
-    //Wait for the children to finish
-    while(wait(NULL) > 0);
-    //Exit
-    exit(EXIT_SUCCESS);
+ //Indicate that the server has to shutdown
+ serverShutdown = true;
+ //Wait for the children to finish
+
+ // I need to wait for all my children
+   while(wait(NULL)>0);
+
+ //Exit
+ exit(EXIT_SUCCESS);
+
 }
 
 void client(char *clientName, int numMessages, char *messages[])
@@ -180,6 +185,7 @@ void client(char *clientName, int numMessages, char *messages[])
         }
         
         // read the response
+        bzero(buffer, 256);
         n = read(sockfd,buffer, 255);
         if (n<0) error("ERROR reading from socket");
         printf("Client %s(%d): Return message: %s\n", clientName, getpid(), buffer);
@@ -197,6 +203,7 @@ void client(char *clientName, int numMessages, char *messages[])
 
 void server()
 {
+    while(!shutdownServer){
     int sockfd, newsockfd, clilen;
     char buffer[256];
     struct sockaddr_in serv_addr, cli_addr;
@@ -261,4 +268,6 @@ void server()
     //Close socket
     close(newsockfd);
     close(sockfd);
+    }
+    exit(EXIT_SUCCESS);
 }
